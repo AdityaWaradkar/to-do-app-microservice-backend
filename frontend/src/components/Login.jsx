@@ -4,13 +4,38 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
+  const [error, setError] = useState(null); // For displaying error messages
+  const [loading, setLoading] = useState(false); // For loading state
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Handle login logic here, e.g., API call
-    // On success, redirect to the home page
-    navigate("/home"); // Use navigate instead of history.push
+
+    setLoading(true); // Set loading state to true when submitting
+    setError(null); // Clear previous errors
+
+    try {
+      // Send API request to backend for login with credentials included
+      const response = await fetch("http://localhost:8081/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include", // Include credentials (cookies/sessions)
+      });
+
+      if (!response.ok) {
+        throw new Error("Invalid email or password"); // Handle invalid login
+      }
+
+      // On success, navigate to the home page
+      navigate("/home");
+    } catch (err) {
+      setError(err.message); // Set error message
+    } finally {
+      setLoading(false); // Set loading state to false after request
+    }
   };
 
   return (
@@ -20,6 +45,8 @@ const Login = () => {
         className="bg-white p-6 rounded shadow-md w-80"
       >
         <h2 className="text-lg font-bold mb-4">Login</h2>
+        {error && <p className="text-red-500 mb-4">{error}</p>}{" "}
+        {/* Display error message */}
         <div className="mb-4">
           <label className="block text-gray-700">Email</label>
           <input
@@ -42,9 +69,12 @@ const Login = () => {
         </div>
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 w-full rounded hover:bg-blue-600"
+          className={`bg-blue-500 text-white p-2 w-full rounded hover:bg-blue-600 ${
+            loading && "opacity-50 cursor-not-allowed"
+          }`}
+          disabled={loading} // Disable button during loading
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
         <p className="mt-4 text-gray-600">
           Don't have an account?{" "}

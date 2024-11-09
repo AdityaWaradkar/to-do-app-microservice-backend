@@ -3,99 +3,65 @@ package handlers
 import (
     "encoding/json"
     "net/http"
-    "github.com/gorilla/mux" // Import gorilla/mux
-    "user-service/models"      // Import user models
+    "user-service/models"
+    "user-service/session"
 )
 
-// RegisterUser handles user registration
-func RegisterUser(w http.ResponseWriter, r *http.Request) {
-    var user models.User
-    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
-
-    registeredUser, err := models.RegisterUser(user)
-    if err != nil {
-        // Return a JSON error response
-        w.Header().Set("Content-Type", "application/json") // Set content type
-        w.WriteHeader(http.StatusConflict)
-        json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
-        return
-    }
-
-    w.Header().Set("Content-Type", "application/json") // Set content type
-    w.WriteHeader(http.StatusCreated)
-    json.NewEncoder(w).Encode(registeredUser)
+type RegisterInput struct {
+    Username string `json:"username"`
+    Email    string `json:"email"`
+    Password string `json:"password"`
 }
 
-// LoginUser handles user authentication
-func LoginUser(w http.ResponseWriter, r *http.Request) {
-    var user models.User
-    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+    var input RegisterInput
+    if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+        http.Error(w, "Invalid input", http.StatusBadRequest)
         return
     }
 
-    authenticatedUser, err := models.AuthenticateUser(user.Username, user.Password)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusUnauthorized)
+    user := models.User{
+        Username: input.Username,
+        Email:    input.Email,
+        Password: input.Password,
+    }
+
+    if err := user.Save(); err != nil {
+        http.Error(w, "Failed to register user", http.StatusInternalServerError)
         return
     }
 
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(authenticatedUser)
+    w.Write([]byte("Registration successful"))
 }
 
-// UpdateUserProfile handles profile updates
-func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
-    id := mux.Vars(r)["id"] // Get user ID from URL
-    var updatedUser models.User
-    if err := json.NewDecoder(r.Body).Decode(&updatedUser); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
-
-    user, err := models.UpdateUserProfile(id, updatedUser)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusNotFound)
-        return
-    }
-
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(user)
+type LoginInput struct {
+    Email    string `json:"email"`
+    Password string `json:"password"`
 }
 
-// ResetPassword handles password resets
-func ResetPassword(w http.ResponseWriter, r *http.Request) {
-    var request struct {
-        Username    string `json:"username"`
-        NewPassword string `json:"new_password"`
-    }
-
-    if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+    var input LoginInput
+    if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+        http.Error(w, "Invalid input", http.StatusBadRequest)
         return
     }
 
-    err := models.ResetPassword(request.Username, request.NewPassword)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusNotFound)
+    // Find user by email in the database
+    user, err := models.FindUserByEmail(input.Email)
+    if err != nil || user.CheckPassword(input.Password) != nil {
+        http.Error(w, "Invalid credentials", http.StatusUnauthorized)
         return
     }
 
-    w.WriteHeader(http.StatusOK)
-    w.Write([]byte("Password reset successful"))
+    // Set session for the logged-in user
+    session.SetSession(w, r, user.Email)
+
+    // Respond with a success message to indicate successful login
+    w.WriteHeader(http.StatusOK) // HTTP 200 OK
+    w.Write([]byte("OK"))
 }
 
-// DeleteUser handles user account deletion
-func DeleteUser(w http.ResponseWriter, r *http.Request) {
-    id := mux.Vars(r)["id"] // Get user ID from URL
-    err := models.DeleteUser(id)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusNotFound)
-        return
-    }
-
-    w.WriteHeader(http.StatusNoContent) // 204 No Content
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+    session.ClearSession(w, r)
+    w.Write([]byte("Logged out"))
 }

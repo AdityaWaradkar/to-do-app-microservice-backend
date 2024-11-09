@@ -2,21 +2,29 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [username, setUsername] = useState(""); // For username
-  const [password, setPassword] = useState(""); // For password
-  const [email, setEmail] = useState(""); // For email
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state for API call
+  const [error, setError] = useState(null); // To capture and display errors
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const userData = {
-      username,
-      password,
-      email,
-    };
+
+    // Basic Validation
+    if (!email || !password || !username) {
+      setError("All fields are required");
+      return;
+    }
+
+    setLoading(true); // Show loading state
+    setError(null); // Clear previous errors
+
+    const userData = { username, password, email };
 
     try {
-      const response = await fetch("http://localhost:8081/api/users/register", {
+      const response = await fetch("http://localhost:8081/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -26,9 +34,6 @@ const Register = () => {
 
       const contentType = response.headers.get("content-type");
       const textResponse = await response.text(); // Get the text response
-
-      console.log("Response:", response);
-      console.log("Response Text:", textResponse);
 
       if (response.ok) {
         if (contentType && contentType.includes("application/json")) {
@@ -41,11 +46,13 @@ const Register = () => {
           contentType && contentType.includes("application/json")
             ? JSON.parse(textResponse)
             : { error: textResponse };
-        alert(errorData.error || "Registration failed.");
+        setError(errorData.error || "Registration failed.");
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      alert("An unexpected error occurred.");
+      setError("An unexpected error occurred.");
+    } finally {
+      setLoading(false); // Hide loading state
     }
   };
 
@@ -56,6 +63,8 @@ const Register = () => {
         className="bg-white p-6 rounded shadow-md w-80"
       >
         <h2 className="text-lg font-bold mb-4">Register</h2>
+        {error && <p className="text-red-500 mb-4">{error}</p>}{" "}
+        {/* Error message */}
         <div className="mb-4">
           <label className="block text-gray-700">Username</label>
           <input
@@ -88,9 +97,12 @@ const Register = () => {
         </div>
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 w-full rounded hover:bg-blue-600"
+          className={`bg-blue-500 text-white p-2 w-full rounded hover:bg-blue-600 ${
+            loading && "opacity-50 cursor-not-allowed"
+          }`}
+          disabled={loading} // Disable button during loading
         >
-          Register
+          {loading ? "Registering..." : "Register"}
         </button>
         <p className="mt-4 text-gray-600">
           Already have an account?{" "}
