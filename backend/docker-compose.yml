@@ -23,16 +23,6 @@ services:
     depends_on:
       - mongo
 
-  notification-service:
-    build:
-      context: ./notification-service
-    ports:
-      - "8083:8083"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/to-do-list-app
-      - SESSION_SECRET=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=
-    depends_on:
-      - mongo
 
   mongo:
     image: mongo:latest
