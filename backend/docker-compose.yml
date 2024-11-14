@@ -9,6 +9,8 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/to-do-list-app
       - SESSION_SECRET=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=
+    depends_on:
+      - mongo
 
   todo-service:
     build:
@@ -18,6 +20,8 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/to-do-list-app
       - SESSION_SECRET=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=
+    depends_on:
+      - mongo
 
   notification-service:
     build:
@@ -27,8 +31,16 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/to-do-list-app
       - SESSION_SECRET=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=
+    depends_on:
+      - mongo
 
   mongo:
     image: mongo:latest
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+
+volumes:
+  mongo-data:

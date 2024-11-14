@@ -1,34 +1,53 @@
 import React, { useState, useEffect } from "react";
 
 const TodoComponent = () => {
-  const [todos, setTodos] = useState([]); // Array of to-dos
-  const [newTodo, setNewTodo] = useState(""); // To store input for new todo
+  const [todos, setTodos] = useState([]); // Initialize as an empty array
+  const [newTodo, setNewTodo] = useState({
+    title: "",
+    description: "",
+    completed: false,
+  }); // To store input for new todo
   const [editTodo, setEditTodo] = useState(null); // To track which todo is being edited
   const [editText, setEditText] = useState(""); // To store edited text
+  const [userID, setUserID] = useState(localStorage.getItem("userID")); // Get user ID from localStorage
 
   // Fetch all todos when the component mounts
   useEffect(() => {
-    fetchTodos();
-  }, []);
+    if (userID) {
+      fetchTodos();
+    }
+  }, [userID]); // Re-run fetchTodos when userID changes
 
   // Fetch todos from backend API
   const fetchTodos = async () => {
     try {
-      const response = await fetch("http://localhost:8082/todos");
+      const response = await fetch(
+        `http://localhost:8082/todos/fetch?userID=${userID}`
+      );
       const data = await response.json();
-      setTodos(data);
+
+      // Ensure the response is an array before setting state
+      if (Array.isArray(data)) {
+        setTodos(data);
+      } else {
+        console.error("Error: Response data is not an array", data);
+        setTodos([]); // Set to empty array if data is not an array
+      }
     } catch (error) {
       console.error("Error fetching todos:", error);
+      setTodos([]); // Set to empty array in case of an error
     }
   };
 
   // Handle adding a new todo
   const handleAddTodo = async () => {
-    if (!newTodo) return; // Do nothing if input is empty
+    if (!newTodo.title) return; // Do nothing if input is empty
 
     const newTodoItem = {
-      text: newTodo,
-      completed: false,
+      title: newTodo.title,
+      description: newTodo.description,
+      completed: newTodo.completed,
+      user_id: userID, // Send the user ID with the todo
     };
 
     try {
@@ -42,7 +61,7 @@ const TodoComponent = () => {
 
       if (response.ok) {
         fetchTodos(); // Refresh the list of todos after adding
-        setNewTodo(""); // Clear input after adding
+        setNewTodo({ title: "", description: "", completed: false }); // Clear input after adding
       } else {
         console.error("Failed to add todo");
       }
@@ -52,9 +71,9 @@ const TodoComponent = () => {
   };
 
   // Handle editing a todo
-  const handleEditTodo = (id, text) => {
+  const handleEditTodo = (id, title, description) => {
     setEditTodo(id);
-    setEditText(text); // Set current todo text to edit
+    setEditText(title); // Set current todo title to edit
   };
 
   // Handle saving edited todo
@@ -62,8 +81,11 @@ const TodoComponent = () => {
     if (!editText) return; // Do nothing if input is empty
 
     const updatedTodo = {
-      text: editText,
+      id: editTodo, // Pass the id of the todo being edited
+      title: editText,
+      description: newTodo.description, // You can adjust this logic to include editing of description
       completed: false, // You can change this if editing completion status
+      user_id: userID, // Keep user_id unchanged
     };
 
     try {
@@ -91,8 +113,11 @@ const TodoComponent = () => {
   const handleToggleComplete = async (id, currentStatus) => {
     try {
       const updatedTodo = {
-        text: todos.find((todo) => todo.id === id).text, // Keep the text the same
+        id: id, // Pass the id to identify the todo
+        title: todos.find((todo) => todo.id === id).title, // Keep the title the same
+        description: todos.find((todo) => todo.id === id).description, // Keep the description the same
         completed: !currentStatus, // Toggle completion status
+        user_id: userID, // Ensure user_id is sent
       };
 
       const response = await fetch(`http://localhost:8082/todos/${id}`, {
@@ -118,6 +143,10 @@ const TodoComponent = () => {
     try {
       const response = await fetch(`http://localhost:8082/todos/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: userID }),
       });
 
       if (response.ok) {
@@ -140,8 +169,8 @@ const TodoComponent = () => {
       <div className="mb-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
         <input
           type="text"
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
+          value={newTodo.title}
+          onChange={(e) => setNewTodo({ ...newTodo, title: e.target.value })}
           className="border border-gray-300 p-3 w-full md:w-3/4 rounded-md"
           placeholder="Add a new to-do"
         />
@@ -154,11 +183,7 @@ const TodoComponent = () => {
       </div>
 
       {/* Todo List */}
-      {todos.length === 0 ? (
-        <p className="text-center text-gray-600">
-          No tasks yet. Start by adding some!
-        </p>
-      ) : (
+      {Array.isArray(todos) && todos.length > 0 ? (
         <ul className="space-y-4">
           {todos.map((todo) => (
             <li
@@ -185,7 +210,7 @@ const TodoComponent = () => {
                       todo.completed ? "line-through text-gray-500" : ""
                     }`}
                   >
-                    {todo.text}
+                    {todo.title}
                   </span>
                 )}
               </div>
@@ -201,7 +226,9 @@ const TodoComponent = () => {
                   </button>
                 ) : (
                   <button
-                    onClick={() => handleEditTodo(todo.id, todo.text)}
+                    onClick={() =>
+                      handleEditTodo(todo.id, todo.title, todo.description)
+                    }
                     className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
                   >
                     Edit
@@ -218,6 +245,10 @@ const TodoComponent = () => {
             </li>
           ))}
         </ul>
+      ) : (
+        <p className="text-center text-gray-600">
+          No tasks yet. Start by adding some!
+        </p>
       )}
     </div>
   );

@@ -1,89 +1,134 @@
 package handlers
 
 import (
-    "encoding/json"
-    "net/http"
-    "github.com/gorilla/mux"
-    "todo-service/models"
-    "go.mongodb.org/mongo-driver/bson/primitive"
+	"encoding/json"
+	"net/http"
+	"todo-service/models"
+
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// AddToDo handles creating a new to-do item
-func AddToDo(w http.ResponseWriter, r *http.Request) {
-    var todo models.ToDo
-    if err := json.NewDecoder(r.Body).Decode(&todo); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
+// FetchTodosHandler handles fetching todos for a specific user
+func FetchTodosHandler(w http.ResponseWriter, r *http.Request) {
+	userID := r.URL.Query().Get("userID")
+	if userID == "" {
+		http.Error(w, `{"error": "Missing user ID"}`, http.StatusBadRequest)
+		return
+	}
 
-    createdToDo, err := models.AddToDo(todo)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	userObjectID, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		http.Error(w, `{"error": "Invalid User ID"}`, http.StatusBadRequest)
+		return
+	}
 
-    w.WriteHeader(http.StatusCreated)
-    json.NewEncoder(w).Encode(createdToDo)
+	todos, err := models.FetchTodos(userObjectID)
+	if err != nil {
+		http.Error(w, `{"error": "Error fetching todos"}`, http.StatusInternalServerError)
+		return
+	}
+
+	// Return the todos as JSON
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(todos); err != nil {
+		http.Error(w, `{"error": "Failed to encode todos"}`, http.StatusInternalServerError)
+		return
+	}
 }
 
-// GetToDo handles retrieving a specific to-do item by ID
-func GetToDo(w http.ResponseWriter, r *http.Request) {
-    id := mux.Vars(r)["id"]
-    objectId, err := primitive.ObjectIDFromHex(id)
-    if err != nil {
-        http.Error(w, "Invalid ID format", http.StatusBadRequest)
-        return
-    }
+// AddTodoHandler - Handler to add a new todo
+func AddTodoHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-    todo, err := models.GetToDoByID(objectId)
-    if err != nil {
-        http.Error(w, "To-Do item not found", http.StatusNotFound)
-        return
-    }
+	var input models.TodoInput
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, `{"error": "Invalid input"}`, http.StatusBadRequest)
+		return
+	}
 
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(todo)
+	userID, err := primitive.ObjectIDFromHex(input.UserID)
+	if err != nil {
+		http.Error(w, `{"error": "Invalid User ID"}`, http.StatusBadRequest)
+		return
+	}
+
+	todo := models.Todo{
+		ID:          primitive.NewObjectID(),
+		Title:       input.Title,
+		Description: input.Description,
+		Completed:   input.Completed,
+		UserID:      userID,
+	}
+
+	if err := todo.Save(); err != nil {
+		http.Error(w, `{"error": "Failed to add todo"}`, http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(`{"status": "success", "message": "Todo added successfully"}`))
 }
 
-// UpdateToDo handles updating a to-do item by ID
-func UpdateToDo(w http.ResponseWriter, r *http.Request) {
-    id := mux.Vars(r)["id"]
-    objectId, err := primitive.ObjectIDFromHex(id)
-    if err != nil {
-        http.Error(w, "Invalid ID format", http.StatusBadRequest)
+// EditTodoHandler - Handler to edit an existing todo
+func EditTodoHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+
+    // Extract todoID from the URL path parameter
+    vars := mux.Vars(r)
+    todoID := vars["id"]
+
+    if todoID == "" {
+        http.Error(w, `{"error": "Missing todo ID"}`, http.StatusBadRequest)
         return
     }
 
-    var updatedToDo models.ToDo
-    if err := json.NewDecoder(r.Body).Decode(&updatedToDo); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
+    // Check if the todo ID is valid
+    if _, err := primitive.ObjectIDFromHex(todoID); err != nil {
+        http.Error(w, `{"error": "Invalid todo ID format"}`, http.StatusBadRequest)
         return
     }
 
-    todo, err := models.UpdateToDoByID(objectId, updatedToDo)
-    if err != nil {
-        http.Error(w, "To-Do item not found", http.StatusNotFound)
+    var input models.TodoInput // Use models.TodoInput
+    if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+        http.Error(w, `{"error": "Invalid input"}`, http.StatusBadRequest)
         return
     }
 
-    w.WriteHeader(http.StatusOK)
-    json.NewEncoder(w).Encode(todo)
+    // Update the todo in the database
+    if err := models.UpdateTodo(todoID, input); err != nil {
+        http.Error(w, `{"error": "Failed to edit todo"}`, http.StatusInternalServerError)
+        return
+    }
+
+    w.Write([]byte(`{"status": "success", "message": "Todo updated successfully"}`))
 }
 
-// DeleteToDo handles deleting a to-do item by ID
-func DeleteToDo(w http.ResponseWriter, r *http.Request) {
-    id := mux.Vars(r)["id"]
-    objectId, err := primitive.ObjectIDFromHex(id)
-    if err != nil {
-        http.Error(w, "Invalid ID format", http.StatusBadRequest)
+
+// DeleteTodoHandler - Handler to delete a todo
+func DeleteTodoHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+
+    // Extract todoID from the URL path using mux variables
+    vars := mux.Vars(r)
+    todoID := vars["id"]
+    if todoID == "" {
+        http.Error(w, `{"error": "Missing todo ID"}`, http.StatusBadRequest)
         return
     }
 
-    err = models.DeleteToDoByID(objectId)
-    if err != nil {
-        http.Error(w, "To-Do item not found", http.StatusNotFound)
+    // Check if the todo ID is valid
+    if _, err := primitive.ObjectIDFromHex(todoID); err != nil {
+        http.Error(w, `{"error": "Invalid todo ID format"}`, http.StatusBadRequest)
         return
     }
 
-    w.WriteHeader(http.StatusNoContent)
+    // Delete the todo from the database
+    if err := models.DeleteTodo(todoID); err != nil {
+        http.Error(w, `{"error": "Failed to delete todo"}`, http.StatusInternalServerError)
+        return
+    }
+
+    // Return success response
+    w.Write([]byte(`{"status": "success", "message": "Todo deleted successfully"}`))
 }

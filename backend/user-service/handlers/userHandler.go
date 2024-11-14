@@ -53,13 +53,19 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Set session for the logged-in user
+    // Set session for the logged-in user (optional, based on your session handling approach)
     session.SetSession(w, r, user.Email)
 
-    // Respond with a success message to indicate successful login
-    w.WriteHeader(http.StatusOK) // HTTP 200 OK
-    w.Write([]byte("OK"))
+    // Respond with user data including the userID
+    response := map[string]interface{}{
+        "message": "OK",
+        "userID": user.ID.Hex(), // Convert ObjectId to string
+    }
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(response)
 }
+
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
     session.ClearSession(w, r)

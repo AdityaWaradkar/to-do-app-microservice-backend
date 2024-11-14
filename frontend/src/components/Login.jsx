@@ -11,8 +11,8 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    setLoading(true); // Set loading state to true when submitting
-    setError(null); // Clear previous errors
+    setLoading(true);
+    setError(null);
 
     try {
       // Send API request to backend for login with credentials included
@@ -26,15 +26,20 @@ const Login = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Invalid email or password"); // Handle invalid login
+        throw new Error("Invalid email or password");
       }
+
+      const data = await response.json();
+
+      // Save userID to localStorage (or use React Context/State)
+      localStorage.setItem("userID", data.userID);
 
       // On success, navigate to the home page
       navigate("/home");
     } catch (err) {
-      setError(err.message); // Set error message
+      setError(err.message);
     } finally {
-      setLoading(false); // Set loading state to false after request
+      setLoading(false);
     }
   };
 
