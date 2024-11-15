@@ -7,7 +7,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       // Make a request to log the user out (clear session in backend)
-      const response = await fetch("http://localhost:8081/logout", {
+      const response = await fetch("http://184.73.49.50:8081/logout", {
         method: "POST",
         credentials: "include", // Ensure cookies are sent with the request
       });
