@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -7,19 +7,19 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       // Make a request to log the user out (clear session in backend)
-      const response = await fetch('http://localhost:8081/logout', {
-        method: 'POST',
-        credentials: 'include', // Ensure cookies are sent with the request
+      const response = await fetch("http://localhost:8081/logout", {
+        method: "POST",
+        credentials: "include", // Ensure cookies are sent with the request
       });
 
       if (response.ok) {
         // Redirect user to the login page after successful logout
-        navigate('/login');
+        navigate("/login");
       } else {
-        console.error('Logout failed');
+        console.error("Logout failed");
       }
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error("Error logging out:", error);
     }
   };
 
