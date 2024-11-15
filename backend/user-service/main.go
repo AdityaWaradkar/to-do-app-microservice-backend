@@ -27,7 +27,7 @@ func main() {
 
 	// Set up CORS with credentials support and allow origin from your frontend
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://localhost:5173"}, // Frontend URL
+		AllowedOrigins: []string{"https://to-do-list-app-9753.netlify.app/"}, // Frontend URL
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Content-Type"},
 		AllowCredentials: true, // Allow credentials (cookies, sessions)

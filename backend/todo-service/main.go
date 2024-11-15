@@ -27,7 +27,7 @@ func main() {
 
     // Configure CORS
     corsHandler := cors.New(cors.Options{
-        AllowedOrigins: []string{"http://localhost:5173"},  // React app's URL
+        AllowedOrigins: []string{"https://to-do-list-app-9753.netlify.app/"},  // React app's URL
         AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
         AllowedHeaders: []string{"Content-Type"},
         AllowCredentials: true,
