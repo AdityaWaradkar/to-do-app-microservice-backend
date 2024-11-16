@@ -22,7 +22,7 @@ const TodoComponent = () => {
   const fetchTodos = async () => {
     try {
       const response = await fetch(
-        `http://18.207.152.253:8082/api/todos/fetch?userID=${userID}`
+        `http://13.203.79.155:8082/api/todos/fetch?userID=${userID}`
       );
       const data = await response.json();
 
@@ -51,7 +51,7 @@ const TodoComponent = () => {
     };
 
     try {
-      const response = await fetch("http://18.207.152.253:8082/api/todos", {
+      const response = await fetch("http://13.203.79.155:8082/api/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +90,7 @@ const TodoComponent = () => {
 
     try {
       const response = await fetch(
-        `http://18.207.152.253:8082/api/todos/${editTodo}`,
+        `http://13.203.79.155:8082/api/todos/${editTodo}`,
         {
           method: "PUT",
           headers: {
@@ -124,7 +124,7 @@ const TodoComponent = () => {
       };
 
       const response = await fetch(
-        `http://18.207.152.253:8082/api/todos/${id}`,
+        `http://13.203.79.155:8082/api/todos/${id}`,
         {
           method: "PUT",
           headers: {
@@ -148,7 +148,7 @@ const TodoComponent = () => {
   const handleDeleteTodo = async (id) => {
     try {
       const response = await fetch(
-        `http://18.207.152.253:8082/api/todos/${id}`,
+        `http://13.203.79.155:8082/api/todos/${id}`,
         {
           method: "DELETE",
           headers: {

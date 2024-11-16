@@ -22,7 +22,7 @@ const Register = () => {
 
     try {
       const response = await fetch(
-        "http://18.207.152.253:8081/api/user/register",
+        "http://13.203.79.155:8081/api/user/register",
         {
           method: "POST",
           headers: {
