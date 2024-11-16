@@ -7,7 +7,7 @@ services:
     ports:
       - "8081:8081" # Map 8081 on the EC2 instance to 8081 in the container
     environment:
-      - MONGO_URI=mongodb+srv://adityawaradkar1801:Aditya@9326@to-do-list-app.wjysz.mongodb.net/to-do-list-app?retryWrites=true&w=majority
+      - MONGO_URI=mongodb+srv://to-do-list-app-database:9326732594@to-do-list-app.wjysz.mongodb.net/to-do-list-app?retryWrites=true&w=majority
       - SESSION_SECRET=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=
     restart: always
 
@@ -17,7 +17,7 @@ services:
     ports:
       - "8082:8082" # Map 8082 on the EC2 instance to 8082 in the container
     environment:
-      - MONGO_URI=mongodb+srv://adityawaradkar1801:Aditya@9326@to-do-list-app.wjysz.mongodb.net/to-do-list-app?retryWrites=true&w=majority
+      - MONGO_URI=mongodb+srv://to-do-list-app-database:9326732594@to-do-list-app.wjysz.mongodb.net/to-do-list-app?retryWrites=true&w=majority
       - SESSION_SECRET=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=
     restart: always
 
