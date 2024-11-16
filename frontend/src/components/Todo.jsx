@@ -22,7 +22,7 @@ const TodoComponent = () => {
   const fetchTodos = async () => {
     try {
       const response = await fetch(
-        `http://184.73.49.50:8082/todos/fetch?userID=${userID}`
+        `https://100.27.231.130:8082/todos/fetch?userID=${userID}`
       );
       const data = await response.json();
 
@@ -51,7 +51,7 @@ const TodoComponent = () => {
     };
 
     try {
-      const response = await fetch("http://184.73.49.50:8082/todos", {
+      const response = await fetch("https://100.27.231.130:8082/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,7 +89,7 @@ const TodoComponent = () => {
     };
 
     try {
-      const response = await fetch(`http://184.73.49.50:8082/todos/${editTodo}`, {
+      const response = await fetch(`https://100.27.231.130:8082/todos/${editTodo}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -120,7 +120,7 @@ const TodoComponent = () => {
         user_id: userID, // Ensure user_id is sent
       };
 
-      const response = await fetch(`http://184.73.49.50:8082/todos/${id}`, {
+      const response = await fetch(`https://100.27.231.130:8082/todos/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +141,7 @@ const TodoComponent = () => {
   // Handle deleting a todo
   const handleDeleteTodo = async (id) => {
     try {
-      const response = await fetch(`http://184.73.49.50:8082/todos/${id}`, {
+      const response = await fetch(`https://100.27.231.130:8082/todos/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

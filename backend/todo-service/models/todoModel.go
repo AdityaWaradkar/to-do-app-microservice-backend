@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 var todoCollection *mongo.Collection
@@ -34,69 +35,25 @@ func ConnectDB(uri string) error {
 	if err != nil {
 		return err
 	}
+
+	// Establish a connection with timeout context
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	if err := client.Connect(ctx); err != nil {
 		return err
 	}
-	if err := client.Ping(ctx, nil); err != nil {
+
+	// Ping to check if the MongoDB connection is alive
+	if err := client.Ping(ctx, readpref.Primary()); err != nil {
 		return err
 	}
 
+	// Assign the collections to the global variables
 	todoCollection = client.Database("to-do-list-app").Collection("todos")
+
 	log.Println("Connected to MongoDB successfully")
-
-	// Insert dummy tasks after establishing connection
-	insertDummyTasks()
-
 	return nil
-}
-
-// InsertDummyTasks inserts 2-3 dummy tasks into the database
-func insertDummyTasks() {
-	// Check if there are any existing tasks before inserting
-	count, err := todoCollection.CountDocuments(context.Background(), bson.M{})
-	if err != nil {
-		log.Println("Error checking task count:", err)
-		return
-	}
-
-	if count > 0 {
-		log.Println("Dummy tasks already inserted.")
-		return
-	}
-
-	todos := []Todo{
-		{
-			Title:       "Complete Go tutorial",
-			Description: "Finish the Go tutorial to learn the basics of Go programming.",
-			Completed:   false,
-			UserID:      primitive.NewObjectID(), // Replace with a valid user ID
-		},
-		{
-			Title:       "Buy groceries",
-			Description: "Get groceries for the week, including fruits and vegetables.",
-			Completed:   false,
-			UserID:      primitive.NewObjectID(), // Replace with a valid user ID
-		},
-		{
-			Title:       "Read a book",
-			Description: "Read a chapter of a programming book to improve skills.",
-			Completed:   true,
-			UserID:      primitive.NewObjectID(), // Replace with a valid user ID
-		},
-	}
-
-	// Insert dummy tasks into the collection
-	for _, todo := range todos {
-		_, err := todoCollection.InsertOne(context.Background(), todo)
-		if err != nil {
-			log.Println("Error inserting dummy task:", err)
-		}
-	}
-
-	log.Println("Dummy tasks inserted successfully")
 }
 
 // Save inserts a new todo document into MongoDB

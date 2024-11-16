@@ -11,11 +11,11 @@ func SetupRoutes() *mux.Router {
     router := mux.NewRouter()
 
     // Public routes
-    router.HandleFunc("/register", handlers.RegisterHandler).Methods("POST")
-    router.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
+    router.HandleFunc("/api/user/register", handlers.RegisterHandler).Methods("POST")
+    router.HandleFunc("/api/user/login", handlers.LoginHandler).Methods("POST")
 
     // Protected route
-    router.Handle("/logout", middleware.SessionMiddleware(http.HandlerFunc(handlers.LogoutHandler))).Methods("POST")
+    router.Handle("/api/user/logout", middleware.SessionMiddleware(http.HandlerFunc(handlers.LogoutHandler))).Methods("POST")
 
     return router
 }

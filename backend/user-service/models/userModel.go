@@ -1,14 +1,16 @@
 package models
 
 import (
-    "context"
-    "go.mongodb.org/mongo-driver/bson"
-    "go.mongodb.org/mongo-driver/bson/primitive"
-    "go.mongodb.org/mongo-driver/mongo"
-    "go.mongodb.org/mongo-driver/mongo/options"
-    "go.mongodb.org/mongo-driver/mongo/readpref"
-    "golang.org/x/crypto/bcrypt"
-    "time"
+	"context"
+	"log"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var userCollection *mongo.Collection
@@ -21,22 +23,29 @@ type User struct {
 }
 
 func ConnectDB(uri string) error {
-    client, err := mongo.NewClient(options.Client().ApplyURI(uri))
-    if err != nil {
-        return err
-    }
-    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-    defer cancel()
+	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+	if err != nil {
+		return err
+	}
 
-    if err := client.Connect(ctx); err != nil {
-        return err
-    }
-    if err := client.Ping(ctx, readpref.Primary()); err != nil {
-        return err
-    }
+	// Establish a connection with timeout context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-    userCollection = client.Database("to-do-list-app").Collection("users")
-    return nil
+	if err := client.Connect(ctx); err != nil {
+		return err
+	}
+
+	// Ping to check if the MongoDB connection is alive
+	if err := client.Ping(ctx, readpref.Primary()); err != nil {
+		return err
+	}
+
+	// Assign the collections to the global variables
+	userCollection = client.Database("to-do-list-app").Collection("users")
+
+	log.Println("Connected to MongoDB successfully")
+	return nil
 }
 
 func (u *User) Save() error {

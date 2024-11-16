@@ -1,44 +1,47 @@
 package main
 
 import (
-    "log"
-    "net/http"
-    "os"
-    "todo-service/models"
-    "todo-service/routes"
-    "github.com/rs/cors"
+	"log"
+	"net/http"
+	"os"
+	"todo-service/models"
+	"todo-service/routes"
+
+	"github.com/rs/cors"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
+var todoCollection *mongo.Collection
+
 func main() {
-    // Load MongoDB URI from environment variable
-    mongoURI := os.Getenv("MONGO_URI")
-    if mongoURI == "" {
-        log.Fatal("MONGO_URI environment variable not set")
-    }
+	// Get the MongoDB URI from the environment variable
+	mongoURI := os.Getenv("MONGO_URI")
+	if mongoURI == "" {
+		log.Fatal("MONGO_URI environment variable not set")
+	}
 
-    // Connect to MongoDB
-    if err := models.ConnectDB(mongoURI); err != nil {
-        log.Fatalf("Could not connect to MongoDB: %s\n", err)
-    }
-    log.Println("Connected to MongoDB successfully")
+	// Connect to MongoDB
+	err := models.ConnectDB(mongoURI)
+	if err != nil {
+		log.Fatalf("Could not connect to MongoDB: %s\n", err)
+	}
 
-    // Set up the routes
-    router := routes.SetupRoutes()
+	// Set up routes
+	router := routes.SetupRoutes()
 
-    // Configure CORS
-    corsHandler := cors.New(cors.Options{
-        AllowedOrigins: []string{"https://to-do-list-app-9753.netlify.app/"},  // React app's URL
-        AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
-        AllowedHeaders: []string{"Content-Type"},
-        AllowCredentials: true,
-    })
+	// Set up CORS with credentials support and allow origin from your frontend
+	corsHandler := cors.New(cors.Options{
+		AllowedOrigins: []string{"https://to-do-list-app-7878.netlify.app/"}, // Frontend URL
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Content-Type"},
+		AllowCredentials: true, // Allow credentials (cookies, sessions)
+	})
 
-    // Apply CORS handler
-    handler := corsHandler.Handler(router)
+	// Apply CORS middleware
+	handler := corsHandler.Handler(router)
 
-    // Start the HTTP server
-    log.Println("Todo service is running on :8082...")
-    if err := http.ListenAndServe(":8082", handler); err != nil {
-        log.Fatalf("Could not start server: %s\n", err)
-    }
+	log.Println("User service is running on :8082...")
+	if err := http.ListenAndServe(":8082", handler); err != nil {
+		log.Fatalf("Could not start server: %s\n", err)
+	}
 }

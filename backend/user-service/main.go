@@ -6,8 +6,12 @@ import (
 	"os"
 	"user-service/models"
 	"user-service/routes"
+
 	"github.com/rs/cors"
+	"go.mongodb.org/mongo-driver/mongo"
 )
+
+var userCollection *mongo.Collection
 
 func main() {
 	// Get the MongoDB URI from the environment variable
@@ -27,7 +31,7 @@ func main() {
 
 	// Set up CORS with credentials support and allow origin from your frontend
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins: []string{"https://to-do-list-app-9753.netlify.app/"}, // Frontend URL
+		AllowedOrigins: []string{"https://to-do-list-app-7878.netlify.app/"}, // Frontend URL
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Content-Type"},
 		AllowCredentials: true, // Allow credentials (cookies, sessions)
