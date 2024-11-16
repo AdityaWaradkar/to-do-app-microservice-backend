@@ -8,7 +8,7 @@ const Navbar = () => {
     try {
       // Make a request to log the user out (clear session in backend)
       const response = await fetch(
-        "https://18.207.152.253:8081/api/user/logout",
+        "http://18.207.152.253:8081/api/user/logout",
         {
           method: "POST",
           credentials: "include", // Ensure cookies are sent with the request

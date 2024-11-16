@@ -17,7 +17,7 @@ const Login = () => {
     try {
       // Send API request to backend for login with credentials included
       const response = await fetch(
-        "https://18.207.152.253:8081/api/user/login",
+        "http://18.207.152.253:8081/api/user/login",
         {
           method: "POST",
           headers: {
