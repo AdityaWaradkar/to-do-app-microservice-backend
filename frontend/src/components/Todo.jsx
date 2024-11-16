@@ -22,7 +22,7 @@ const TodoComponent = () => {
   const fetchTodos = async () => {
     try {
       const response = await fetch(
-        `https://100.27.231.130:8082/todos/fetch?userID=${userID}`
+        `https://18.207.152.253:8082/api/todos/fetch?userID=${userID}`
       );
       const data = await response.json();
 
@@ -51,7 +51,7 @@ const TodoComponent = () => {
     };
 
     try {
-      const response = await fetch("https://100.27.231.130:8082/todos", {
+      const response = await fetch("https://18.207.152.253:8082/api/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,13 +89,16 @@ const TodoComponent = () => {
     };
 
     try {
-      const response = await fetch(`https://100.27.231.130:8082/todos/${editTodo}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedTodo),
-      });
+      const response = await fetch(
+        `https://18.207.152.253:8082/api/todos/${editTodo}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedTodo),
+        }
+      );
 
       if (response.ok) {
         fetchTodos(); // Refresh the list after editing
@@ -120,13 +123,16 @@ const TodoComponent = () => {
         user_id: userID, // Ensure user_id is sent
       };
 
-      const response = await fetch(`https://100.27.231.130:8082/todos/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedTodo),
-      });
+      const response = await fetch(
+        `https://18.207.152.253:8082/api/todos/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedTodo),
+        }
+      );
 
       if (response.ok) {
         fetchTodos(); // Refresh the list after toggling
@@ -141,13 +147,16 @@ const TodoComponent = () => {
   // Handle deleting a todo
   const handleDeleteTodo = async (id) => {
     try {
-      const response = await fetch(`https://100.27.231.130:8082/todos/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: userID }),
-      });
+      const response = await fetch(
+        `https://18.207.152.253:8082/api/todos/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: userID }),
+        }
+      );
 
       if (response.ok) {
         fetchTodos(); // Refresh the list after deletion

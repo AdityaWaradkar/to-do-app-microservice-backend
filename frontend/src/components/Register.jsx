@@ -21,13 +21,16 @@ const Register = () => {
     const userData = { username, password, email };
 
     try {
-      const response = await fetch("https://100.27.231.130:8081/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
+      const response = await fetch(
+        "https://18.207.152.253:8081/api/user/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        }
+      );
 
       const contentType = response.headers.get("content-type");
       const textResponse = await response.text(); // Get the text response

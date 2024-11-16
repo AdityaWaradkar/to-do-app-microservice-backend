@@ -16,14 +16,17 @@ const Login = () => {
 
     try {
       // Send API request to backend for login with credentials included
-      const response = await fetch("https://100.27.231.130:8081/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: "include", // Include credentials (cookies/sessions)
-      });
+      const response = await fetch(
+        "https://18.207.152.253:8081/api/user/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+          credentials: "include", // Include credentials (cookies/sessions)
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Invalid email or password");
