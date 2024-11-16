@@ -17,8 +17,9 @@ const App = () => {
         {/* Display Login on root path */}
         <Route path="/home" element={<Home />} /> {/* Home page at /home */}
         <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Navigate to="/" />} />{" "}
-        {/* Redirect from /login to root */}
+        {/* If logged in, redirect to /home, else show /login */}
+        {/* You can add a simple check for authentication here */}
+        <Route path="/login" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );

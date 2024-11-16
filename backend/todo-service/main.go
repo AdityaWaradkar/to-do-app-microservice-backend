@@ -8,10 +8,8 @@ import (
 	"todo-service/routes"
 
 	"github.com/rs/cors"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var todoCollection *mongo.Collection
 
 func main() {
 	// Get the MongoDB URI from the environment variable
@@ -31,7 +29,9 @@ func main() {
 
 	// Set up CORS with credentials support and allow origin from your frontend
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins: []string{"https://to-do-list-app-7878.netlify.app/"}, // Frontend URL
+		AllowedOrigins: []string{
+			"http://to-do-list-app-9876.s3-website-us-east-1.amazonaws.com", // Updated frontend URL
+		}, // Frontend URL
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Content-Type"},
 		AllowCredentials: true, // Allow credentials (cookies, sessions)
@@ -40,7 +40,7 @@ func main() {
 	// Apply CORS middleware
 	handler := corsHandler.Handler(router)
 
-	log.Println("User service is running on :8082...")
+	log.Println("Todo service is running on :8082...")
 	if err := http.ListenAndServe(":8082", handler); err != nil {
 		log.Fatalf("Could not start server: %s\n", err)
 	}
