@@ -5,19 +5,18 @@ services:
     build:
       context: ./user-service
     ports:
-      - "8081:8081" # Map 8081 on the EC2 instance to 8081 in the container
+      - "8081:8081"
     environment:
       - MONGO_URI=mongodb+srv://to-do-list-app-database:9326732594@to-do-list-app.wjysz.mongodb.net/to-do-list-app?retryWrites=true&w=majority
-      - SESSION_SECRET=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=
+      - JWT_SECRET_KEY=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=  # Use JWT secret key here
     restart: always
 
   todo-service:
     build:
       context: ./todo-service
     ports:
-      - "8082:8082" # Map 8082 on the EC2 instance to 8082 in the container
+      - "8082:8082"
     environment:
       - MONGO_URI=mongodb+srv://to-do-list-app-database:9326732594@to-do-list-app.wjysz.mongodb.net/to-do-list-app?retryWrites=true&w=majority
-      - SESSION_SECRET=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=
+      - JWT_SECRET_KEY=sEw/9+j7n/R3rYNmupAHvZORfSjhFD6Fn7M6jImLmKE=  # Use JWT secret key here
     restart: always
-

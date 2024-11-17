@@ -4,27 +4,16 @@ import { useNavigate } from "react-router-dom";
 const Navbar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      // Make a request to log the user out (clear session in backend)
-      const response = await fetch(
-        "http://13.203.79.155:8081/api/user/logout",
-        {
-          method: "POST",
-          credentials: "include", // Ensure cookies are sent with the request
-        }
-      );
-
-      if (response.ok) {
-        // Redirect user to the login page after successful logout
-        navigate("/login");
-      } else {
-        console.error("Logout failed");
-      }
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
+  // Ensure that you're processing the response as an object, not an array
+  const handleLogout = () => {
+    // Clear token and userID from localStorage
+    localStorage.removeItem("userID");
+    localStorage.removeItem("token");
+  
+    // Redirect user to the login page
+    navigate("/");
   };
+  
 
   return (
     <nav className="bg-blue-500 text-white p-4 flex justify-between items-center">

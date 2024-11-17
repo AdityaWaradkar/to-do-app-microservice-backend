@@ -1,10 +1,9 @@
 package routes
 
 import (
-    "github.com/gorilla/mux"
-    "net/http"
-    "user-service/handlers"
-    "user-service/middleware"
+	"user-service/handlers"
+
+	"github.com/gorilla/mux"
 )
 
 func SetupRoutes() *mux.Router {
@@ -15,7 +14,8 @@ func SetupRoutes() *mux.Router {
     router.HandleFunc("/api/user/login", handlers.LoginHandler).Methods("POST")
 
     // Protected route
-    router.Handle("/api/user/logout", middleware.SessionMiddleware(http.HandlerFunc(handlers.LogoutHandler))).Methods("POST")
+    // Replace SessionMiddleware with JWTMiddleware
+   
 
     return router
 }

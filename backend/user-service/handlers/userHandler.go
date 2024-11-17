@@ -4,7 +4,7 @@ import (
     "encoding/json"
     "net/http"
     "user-service/models"
-    "user-service/session"
+    "user-service/jwt"  // Assuming you have a jwt package for token creation
 )
 
 type RegisterInput struct {
@@ -31,8 +31,12 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    w.Write([]byte("Registration successful"))
+    // Send a JSON response on successful registration
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(map[string]string{"message": "Registration successful"})
 }
+
 
 type LoginInput struct {
     Email    string `json:"email"`
@@ -53,21 +57,22 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Set session for the logged-in user (optional, based on your session handling approach)
-    session.SetSession(w, r, user.Email)
+    // Generate JWT token for the user
+    token, err := jwt.GenerateToken(user.ID.Hex())  // Assuming GenerateToken is a function in your jwt package
+    if err != nil {
+        http.Error(w, "Failed to generate token", http.StatusInternalServerError)
+        return
+    }
 
-    // Respond with user data including the userID
+    // Respond with JWT token and userID
     response := map[string]interface{}{
         "message": "OK",
-        "userID": user.ID.Hex(), // Convert ObjectId to string
+        "token":   token,  // Send the JWT token
+        "userID":  user.ID.Hex(), // Send the userID in the response
     }
+
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(response)
 }
 
-
-func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-    session.ClearSession(w, r)
-    w.Write([]byte("Logged out"))
-}

@@ -39,7 +39,7 @@ const Register = () => {
         if (contentType && contentType.includes("application/json")) {
           const jsonResponse = JSON.parse(textResponse);
           // Successfully registered, redirect to login page
-          navigate("/login");
+          navigate("/");
         } else {
           setError("Unexpected response format.");
         }
@@ -108,7 +108,7 @@ const Register = () => {
         </button>
         <p className="mt-4 text-gray-600">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-500 hover:text-blue-700">
+          <a href="/" className="text-blue-500 hover:text-blue-700">
             Login here
           </a>
         </p>
