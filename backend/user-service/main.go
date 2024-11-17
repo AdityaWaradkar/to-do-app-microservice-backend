@@ -29,7 +29,7 @@ func main() {
 	// Set up CORS with credentials support and allow origin from your frontend
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins: []string{
-			"http://http://to-do-list-app-1001.s3-website.ap-south-1.amazonaws.com/", // Updated frontend URL
+			"http://to-do-list-app-1001.s3-website.ap-south-1.amazonaws.com", // Updated frontend URL
 		}, // Frontend URL
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Content-Type"},
