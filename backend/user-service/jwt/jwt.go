@@ -9,15 +9,13 @@ import (
 var secretKey = os.Getenv("JWT_SECRET_KEY")
 
 func GenerateToken(userID string) (string, error) {
-    // Create a new token object
     claims := jwt.MapClaims{
         "userID": userID,
-        "exp":    time.Now().Add(time.Hour * 24).Unix(),  // Set expiration time (24 hours)
+        "exp":    time.Now().Add(time.Hour * 24).Unix(), 
     }
 
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-    // Sign the token with the secret key
     signedToken, err := token.SignedString([]byte(secretKey))
     if err != nil {
         return "", err

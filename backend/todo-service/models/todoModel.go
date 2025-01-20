@@ -29,14 +29,12 @@ type TodoInput struct {
 	UserID      string `json:"user_id"`
 }
 
-// ConnectDB connects to MongoDB and sets up the todoCollection
 func ConnectDB(uri string) error {
 	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
 		return err
 	}
 
-	// Establish a connection with timeout context
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -44,25 +42,21 @@ func ConnectDB(uri string) error {
 		return err
 	}
 
-	// Ping to check if the MongoDB connection is alive
 	if err := client.Ping(ctx, readpref.Primary()); err != nil {
 		return err
 	}
 
-	// Assign the collections to the global variables
 	todoCollection = client.Database("to-do-list-app").Collection("todos")
 
 	log.Println("Connected to MongoDB successfully")
 	return nil
 }
 
-// Save inserts a new todo document into MongoDB
 func (t *Todo) Save() error {
 	_, err := todoCollection.InsertOne(context.Background(), t)
 	return err
 }
 
-// UpdateTodo updates a todo document in MongoDB
 func UpdateTodo(id string, input TodoInput) error {
 	todoID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -79,7 +73,6 @@ func UpdateTodo(id string, input TodoInput) error {
 	return err
 }
 
-// DeleteTodo deletes a todo document from MongoDB
 func DeleteTodo(id string) error {
 	todoID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -90,7 +83,6 @@ func DeleteTodo(id string) error {
 	return err
 }
 
-// FetchTodos fetches all todos for a given user
 func FetchTodos(userID primitive.ObjectID) ([]Todo, error) {
 	var todos []Todo
 

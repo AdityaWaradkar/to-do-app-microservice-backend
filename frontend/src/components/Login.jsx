@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null); // For displaying error messages
-  const [loading, setLoading] = useState(false); // For loading state
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -15,18 +15,14 @@ const Login = () => {
     setError(null);
 
     try {
-      // Send API request to backend for login with credentials included
-      const response = await fetch(
-        "http://13.203.79.155:8081/api/user/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-          credentials: "include", // Include credentials (cookies/sessions)
-        }
-      );
+      const response = await fetch("http://13.127.32.151:8081/api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error("Invalid email or password");
@@ -34,10 +30,8 @@ const Login = () => {
 
       const data = await response.json();
 
-      // Save userID to localStorage (or use React Context/State)
       localStorage.setItem("userID", data.userID);
 
-      // On success, navigate to the home page
       navigate("/home");
     } catch (err) {
       setError(err.message);
@@ -54,7 +48,6 @@ const Login = () => {
       >
         <h2 className="text-lg font-bold mb-4">Login</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}{" "}
-        {/* Display error message */}
         <div className="mb-4">
           <label className="block text-gray-700">Email</label>
           <input
@@ -80,7 +73,7 @@ const Login = () => {
           className={`bg-blue-500 text-white p-2 w-full rounded hover:bg-blue-600 ${
             loading && "opacity-50 cursor-not-allowed"
           }`}
-          disabled={loading} // Disable button during loading
+          disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
         </button>

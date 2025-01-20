@@ -5,24 +5,23 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state for API call
-  const [error, setError] = useState(null); // To capture and display errors
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    // Basic Validation
     if (!email || !password || !username) {
       setError("All fields are required");
       return;
     }
-    setLoading(true); // Show loading state
-    setError(null); // Clear previous errors
+    setLoading(true);
+    setError(null);
     const userData = { username, password, email };
 
     try {
       const response = await fetch(
-        "http://13.203.79.155:8081/api/user/register",
+        "http://13.127.32.151:8081/api/user/register",
         {
           method: "POST",
           headers: {
@@ -33,12 +32,11 @@ const Register = () => {
       );
 
       const contentType = response.headers.get("content-type");
-      const textResponse = await response.text(); // Get the text response
+      const textResponse = await response.text();
 
       if (response.ok) {
         if (contentType && contentType.includes("application/json")) {
           const jsonResponse = JSON.parse(textResponse);
-          // Successfully registered, redirect to login page
           navigate("/");
         } else {
           setError("Unexpected response format.");
@@ -54,7 +52,7 @@ const Register = () => {
       console.error("Error during registration:", error);
       setError("An unexpected error occurred.");
     } finally {
-      setLoading(false); // Hide loading state
+      setLoading(false);
     }
   };
 
@@ -102,7 +100,7 @@ const Register = () => {
           className={`bg-blue-500 text-white p-2 w-full rounded hover:bg-blue-600 ${
             loading && "opacity-50 cursor-not-allowed"
           }`}
-          disabled={loading} // Disable button during loading
+          disabled={loading}
         >
           {loading ? "Registering..." : "Register"}
         </button>

@@ -1,0 +1,104 @@
+[{
+  "_id": {
+    "$oid": "672dc673beada720791ecdb4"
+  },
+  "username": "username120",
+  "password": "$2a$14$zroX6n5ZYpf6bZKZIAWmG.NJqert7ZPY4M7Jbr6hAQ9oigYAad4oq",
+  "email": "username120@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672dc706beada720791ecdb5"
+  },
+  "username": "username121",
+  "password": "$2a$14$Yzq5bjU7hbUZ/XsYxAk.ueKlAB1oisP6rVh9EYv5DQFI69tdOq4z2",
+  "email": "username121@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672dc87980a6a627693fcf79"
+  },
+  "username": "username122",
+  "password": "$2a$14$794UMtDRHghzxX3eiTrhSeFWb.9cGlb9ATKpd10VItE0eb1Cllp4S",
+  "email": "username122@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672dcae80f09d006c9e37ad7"
+  },
+  "username": "username123",
+  "password": "$2a$14$k1JJ9TmALkiCs9dav3msFeVBBIPQqGFYeovEbETiOoErpBI81GHL.",
+  "email": "username123@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672dcd8074f7dc522ca76eb0"
+  },
+  "username": "username124",
+  "password": "$2a$14$pD8ShemskAT933TZ1WbCoOVU2/yH/pKAxTcby/AOcs4th7IMGEq26",
+  "email": "username124@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672dd49e4e3979d49043421f"
+  },
+  "username": "username125",
+  "password": "$2a$14$Of7yzp5MX/AebzGIYB/krOcavmO9IBhs21sA8k8sTwMBifJfWpipK",
+  "email": "username125@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672dd62bad98839e56bc22cb"
+  },
+  "username": "username126",
+  "password": "username126",
+  "email": "username126@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672dd6e234bb378805cd4ada"
+  },
+  "username": "username127",
+  "password": "username127",
+  "email": "username127@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672dea223e75577c941d5052"
+  },
+  "username": "username135",
+  "password": "$2a$10$UtqFKSZoncyO0.dmwCMWfumfXByo2oKRUDxderYdDPBiW7ZHZTSGu",
+  "email": "username135@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672dea743e75577c941d5053"
+  },
+  "username": "aditya",
+  "password": "$2a$10$8kWHemtM.GoPXXQtnFoPg.Pp3knQua1qWS4EuknZdc39R8HxPGu9G",
+  "email": "adityawaradkar@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672ef662bd844ebd53094eb3"
+  },
+  "username": "username136",
+  "password": "$2a$10$GY8vwixNKX58W7X0pUYskOFOL8wft.7gPePAV2krWUouDj4FF2JkO",
+  "email": "username136@gmail.com"
+},
+{
+  "_id": {
+    "$oid": "672efeb6993d176d1b9a527a"
+  },
+  "username": "adityawaradkar",
+  "email": "aditya.waradkar@gmail.com",
+  "password": "$2a$10$Zn5sA1svWOIGeamjUEiFOeMCYHCkVZzZeN6ZZf/kBFDr6jM5JrPzu"
+},
+{
+  "_id": {
+    "$oid": "6736066427a1eb6976ac7824"
+  },
+  "username": "Aditya",
+  "email": "aditya.waradkar.1@gmail.com",
+  "password": "$2a$10$l5Eb8T1HAODqUkX.tj1gxeuuB8j2EJnFIcRCGXvKy43tlhzE0W3XO"
+}]

@@ -10,34 +10,27 @@ import (
 	"github.com/rs/cors"
 )
 
-
 func main() {
-	// Get the MongoDB URI from the environment variable
 	mongoURI := os.Getenv("MONGO_URI")
 	if mongoURI == "" {
 		log.Fatal("MONGO_URI environment variable not set")
 	}
 
-	// Connect to MongoDB
 	err := models.ConnectDB(mongoURI)
 	if err != nil {
 		log.Fatalf("Could not connect to MongoDB: %s\n", err)
 	}
 
-	// Set up routes
 	router := routes.SetupRoutes()
 
-	// Set up CORS with credentials support and allow origin from your frontend
+	// Update CORS configuration to allow all origins
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins: []string{
-			"http://to-do-list-app-1001.s3-website.ap-south-1.amazonaws.com", // Updated frontend URL
-		}, // Frontend URL
+		AllowedOrigins: []string{"http://to-do-list-web-app.s3-website.ap-south-1.amazonaws.com"}, // Allow all origins
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Content-Type"},
-		AllowCredentials: true, // Allow credentials (cookies, sessions)
+		AllowCredentials: true,
 	})
 
-	// Apply CORS middleware
 	handler := corsHandler.Handler(router)
 
 	log.Println("Todo service is running on :8082...")

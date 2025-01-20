@@ -1,57 +1,53 @@
 import React, { useState, useEffect } from "react";
 
 const TodoComponent = () => {
-  const [todos, setTodos] = useState([]); // Initialize as an empty array
+  const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState({
     title: "",
     description: "",
     completed: false,
-  }); // To store input for new todo
-  const [editTodo, setEditTodo] = useState(null); // To track which todo is being edited
-  const [editText, setEditText] = useState(""); // To store edited text
-  const [userID, setUserID] = useState(localStorage.getItem("userID")); // Get user ID from localStorage
+  });
+  const [editTodo, setEditTodo] = useState(null);
+  const [editText, setEditText] = useState("");
+  const [userID, setUserID] = useState(localStorage.getItem("userID"));
 
-  // Fetch all todos when the component mounts
   useEffect(() => {
     if (userID) {
       fetchTodos();
     }
-  }, [userID]); // Re-run fetchTodos when userID changes
+  }, [userID]);
 
-  // Fetch todos from backend API
   const fetchTodos = async () => {
     try {
       const response = await fetch(
-        `http://13.203.79.155:8082/api/todos/fetch?userID=${userID}`
+        `http://13.127.32.151:8082/api/todos/fetch?userID=${userID}`
       );
       const data = await response.json();
 
-      // Ensure the response is an array before setting state
       if (Array.isArray(data)) {
         setTodos(data);
       } else {
         console.error("Error: Response data is not an array", data);
-        setTodos([]); // Set to empty array if data is not an array
+        setTodos([]);
       }
     } catch (error) {
       console.error("Error fetching todos:", error);
-      setTodos([]); // Set to empty array in case of an error
+      setTodos([]);
     }
   };
 
-  // Handle adding a new todo
   const handleAddTodo = async () => {
-    if (!newTodo.title) return; // Do nothing if input is empty
+    if (!newTodo.title) return;
 
     const newTodoItem = {
       title: newTodo.title,
       description: newTodo.description,
       completed: newTodo.completed,
-      user_id: userID, // Send the user ID with the todo
+      user_id: userID,
     };
 
     try {
-      const response = await fetch("http://13.203.79.155:8082/api/todos", {
+      const response = await fetch("http://13.127.32.151:8082/api/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,8 +56,8 @@ const TodoComponent = () => {
       });
 
       if (response.ok) {
-        fetchTodos(); // Refresh the list of todos after adding
-        setNewTodo({ title: "", description: "", completed: false }); // Clear input after adding
+        fetchTodos();
+        setNewTodo({ title: "", description: "", completed: false });
       } else {
         console.error("Failed to add todo");
       }
@@ -70,27 +66,26 @@ const TodoComponent = () => {
     }
   };
 
-  // Handle editing a todo
   const handleEditTodo = (id, title, description) => {
     setEditTodo(id);
-    setEditText(title); // Set current todo title to edit
+    setEditText(title);
   };
 
   // Handle saving edited todo
   const handleSaveEdit = async () => {
-    if (!editText) return; // Do nothing if input is empty
+    if (!editText) return;
 
     const updatedTodo = {
-      id: editTodo, // Pass the id of the todo being edited
+      id: editTodo,
       title: editText,
-      description: newTodo.description, // You can adjust this logic to include editing of description
-      completed: false, // You can change this if editing completion status
-      user_id: userID, // Keep user_id unchanged
+      description: newTodo.description,
+      completed: false,
+      user_id: userID,
     };
 
     try {
       const response = await fetch(
-        `http://13.203.79.155:8082/api/todos/${editTodo}`,
+        `http://13.127.32.151:8082/api/todos/${editTodo}`,
         {
           method: "PUT",
           headers: {
@@ -101,9 +96,9 @@ const TodoComponent = () => {
       );
 
       if (response.ok) {
-        fetchTodos(); // Refresh the list after editing
-        setEditTodo(null); // Reset edit state
-        setEditText(""); // Clear edit text
+        fetchTodos();
+        setEditTodo(null);
+        setEditText("");
       } else {
         console.error("Failed to save edit");
       }
@@ -112,19 +107,18 @@ const TodoComponent = () => {
     }
   };
 
-  // Handle toggling the completion status of a todo
   const handleToggleComplete = async (id, currentStatus) => {
     try {
       const updatedTodo = {
-        id: id, // Pass the id to identify the todo
-        title: todos.find((todo) => todo.id === id).title, // Keep the title the same
-        description: todos.find((todo) => todo.id === id).description, // Keep the description the same
-        completed: !currentStatus, // Toggle completion status
-        user_id: userID, // Ensure user_id is sent
+        id: id,
+        title: todos.find((todo) => todo.id === id).title,
+        description: todos.find((todo) => todo.id === id).description,
+        completed: !currentStatus,
+        user_id: userID,
       };
 
       const response = await fetch(
-        `http://13.203.79.155:8082/api/todos/${id}`,
+        `http://13.127.32.151:8082/api/todos/${id}`,
         {
           method: "PUT",
           headers: {
@@ -135,7 +129,7 @@ const TodoComponent = () => {
       );
 
       if (response.ok) {
-        fetchTodos(); // Refresh the list after toggling
+        fetchTodos();
       } else {
         console.error("Failed to toggle completion status");
       }
@@ -144,11 +138,10 @@ const TodoComponent = () => {
     }
   };
 
-  // Handle deleting a todo
   const handleDeleteTodo = async (id) => {
     try {
       const response = await fetch(
-        `http://13.203.79.155:8082/api/todos/${id}`,
+        `http://13.127.32.151:8082/api/todos/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -159,7 +152,7 @@ const TodoComponent = () => {
       );
 
       if (response.ok) {
-        fetchTodos(); // Refresh the list after deletion
+        fetchTodos();
       } else {
         console.error("Failed to delete todo");
       }
@@ -174,7 +167,6 @@ const TodoComponent = () => {
         Your To-Do List
       </h2>
 
-      {/* Add new To-Do */}
       <div className="mb-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
         <input
           type="text"
@@ -191,7 +183,6 @@ const TodoComponent = () => {
         </button>
       </div>
 
-      {/* Todo List */}
       {Array.isArray(todos) && todos.length > 0 ? (
         <ul className="space-y-4">
           {todos.map((todo) => (
@@ -224,7 +215,6 @@ const TodoComponent = () => {
                 )}
               </div>
 
-              {/* Action Buttons */}
               <div className="space-x-3 flex items-center">
                 {editTodo === todo.id ? (
                   <button

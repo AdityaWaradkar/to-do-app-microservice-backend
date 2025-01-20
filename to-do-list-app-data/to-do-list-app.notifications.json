@@ -1,0 +1,14 @@
+[{
+  "_id": {
+    "$oid": "67360bc2728481a1e1c40966"
+  },
+  "user_id": {
+    "$oid": "672efeb6993d176d1b9a527a"
+  },
+  "title": "New Todo Created",
+  "message": "You have a new todo task.",
+  "read": true,
+  "created_at": {
+    "$date": "2024-11-14T14:40:02.845Z"
+  }
+}]

@@ -1,0 +1,44 @@
+[{
+  "_id": {
+    "$oid": "6735ff74a9a7a1af0fcaa35c"
+  },
+  "title": "Complete Go tutorial",
+  "description": "Finish the Go tutorial to learn the basics of Go programming.",
+  "completed": false,
+  "user_id": {
+    "$oid": "6735ff74a9a7a1af0fcaa359"
+  }
+},
+{
+  "_id": {
+    "$oid": "6735ff74a9a7a1af0fcaa35d"
+  },
+  "title": "Buy groceries",
+  "description": "Get groceries for the week, including fruits and vegetables.",
+  "completed": false,
+  "user_id": {
+    "$oid": "6735ff74a9a7a1af0fcaa35a"
+  }
+},
+{
+  "_id": {
+    "$oid": "6735ff74a9a7a1af0fcaa35e"
+  },
+  "title": "Read a book",
+  "description": "Read a chapter of a programming book to improve skills.",
+  "completed": true,
+  "user_id": {
+    "$oid": "6735ff74a9a7a1af0fcaa35b"
+  }
+},
+{
+  "_id": {
+    "$oid": "67360e35306617ac2e298499"
+  },
+  "title": "Task 1",
+  "description": "",
+  "completed": true,
+  "user_id": {
+    "$oid": "672efeb6993d176d1b9a527a"
+  }
+}]
